@@ -148,7 +148,8 @@ router.get('/:surveyId/question/:questionId/weighted', async (req, res, next) =>
       ORDER BY completed_at DESC LIMIT 1
     `, [req.params.surveyId]);
 
-    const nEffective = lastRun?.summary?.n_effective || results.reduce((s, r) => s + r.raw_count, 0);
+    const summary = lastRun?.summary ? (typeof lastRun.summary === 'string' ? JSON.parse(lastRun.summary) : lastRun.summary) : null;
+    const nEffective = summary?.n_effective || results.reduce((s, r) => s + r.raw_count, 0);
 
     // Calcular margem de erro para cada resultado
     const withMoe = results.map(r => ({
